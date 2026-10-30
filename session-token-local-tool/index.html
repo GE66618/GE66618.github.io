@@ -4,30 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
-<title>本地 JSON 敏感字段检查</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>本地提取 sessionToken</title>
 <style>
-:root{color-scheme:light;--ink:#17212b;--muted:#647484;--line:#d9e1e8;--blue:#176b87;--paper:#f5f8fa;--red:#a93333}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:880px;margin:48px auto;padding:0 22px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:0 12px 38px #18354a0b}h1{font-size:clamp(1.6rem,4vw,2.3rem);line-height:1.2;margin:0 0 12px}p{color:var(--muted)}.notice{padding:14px 16px;background:#edf6f8;border-left:4px solid var(--blue);border-radius:8px;color:#234653;margin:20px 0}.notice strong{color:#173947}label{display:block;font-weight:650;margin:18px 0 8px}textarea{width:100%;min-height:190px;resize:vertical;border:1px solid #bdcbd5;border-radius:10px;padding:14px;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink)}button{border:0;border-radius:9px;background:var(--blue);color:white;padding:11px 17px;font-weight:650;cursor:pointer;margin:10px 8px 0 0}button.secondary{background:#e9eff3;color:#233744}button:focus-visible,textarea:focus-visible{outline:3px solid #59adc4;outline-offset:2px}.status{min-height:1.5em;color:var(--red);font-weight:600}#results{margin-top:20px;overflow-wrap:anywhere}pre{background:#f3f6f8;border:1px solid var(--line);border-radius:10px;padding:16px;white-space:pre-wrap;word-break:break-word;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}footer{font-size:.9rem;color:var(--muted);margin-top:20px}@media(max-width:600px){main{margin:22px auto}.card{padding:20px}}
+:root{color-scheme:light;--ink:#17212b;--muted:#647484;--line:#d9e1e8;--blue:#176b87;--paper:#f5f8fa;--red:#a93333}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:820px;margin:48px auto;padding:0 22px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:0 12px 38px #18354a0b}h1{font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.2;margin:0 0 12px}p{color:var(--muted)}.notice{padding:14px 16px;background:#edf6f8;border-left:4px solid var(--blue);border-radius:8px;color:#234653;margin:20px 0}.notice strong{color:#173947}label{display:block;font-weight:650;margin:18px 0 8px}textarea{width:100%;min-height:190px;resize:vertical;border:1px solid #bdcbd5;border-radius:10px;padding:14px;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink)}button{border:0;border-radius:9px;background:var(--blue);color:white;padding:11px 17px;font-weight:650;cursor:pointer;margin:10px 8px 0 0}button.secondary{background:#e9eff3;color:#233744}button:focus-visible,textarea:focus-visible{outline:3px solid #59adc4;outline-offset:2px}.status{min-height:1.5em;color:var(--red);font-weight:600}#result{margin-top:20px}output{display:block;min-height:48px;max-height:320px;overflow:auto;background:#f3f6f8;border:1px solid var(--line);border-radius:10px;padding:16px;white-space:pre-wrap;word-break:break-word;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.hint{font-size:.9rem;color:var(--muted);margin-top:18px}@media(max-width:600px){main{margin:22px auto}.card{padding:20px}}
 </style>
 </head>
 <body>
 <main><section class="card">
-<h1>JSON 敏感字段检查</h1>
-<p>在浏览器本地解析 JSON，标出疑似凭证并遮盖其值，便于安全检查结构。</p>
-<div class="notice"><strong>本地处理：</strong>内容只在当前页面内存中解析，不发送网络请求、不保存到浏览器，也不会显示或复制完整 accessToken。请勿将真实凭证粘贴到网页中。</div>
-<label for="input">粘贴 JSON 文本</label>
-<textarea id="input" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder='{"accessToken":"示例值","name":"demo"}'></textarea>
-<div><button id="inspect" type="button">解析并脱敏</button><button id="clear" class="secondary" type="button">清空</button></div>
+<h1>本地提取 sessionToken</h1>
+<p>粘贴 JSON 后，只提取并显示名为 <code>sessionToken</code> 的字段。</p>
+<div class="notice"><strong>本地处理：</strong>解析在当前浏览器内完成，不上传、不保存输入。页面只显示 sessionToken；不会显示或复制 accessToken，也不提供提取完整会话凭证的功能。请仅处理你有权查看的数据。</div>
+<label for="input">JSON 文本</label>
+<textarea id="input" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder='{"sessionToken":"示例值","accessToken":"不会显示"}'></textarea>
+<div><button id="extract" type="button">提取 sessionToken</button><button id="copy" class="secondary" type="button" disabled>复制 sessionToken</button><button id="clear" class="secondary" type="button">清空</button></div>
 <p id="status" class="status" role="status" aria-live="polite"></p>
-<div id="results" hidden><strong>脱敏结果</strong><pre id="output"></pre></div>
-<footer>敏感字段识别采用字段名匹配，可能存在误报或漏报。任何在线页面都无法替代撤销、轮换已暴露凭证。</footer>
+<section id="result" hidden><strong>sessionToken</strong><output id="value"></output></section>
+<p class="hint">若 JSON 内不存在该字段，将提示未找到。字段名区分大小写；嵌套对象和数组中的 sessionToken 也会查找。</p>
 </section></main>
 <script>
 "use strict";
-const sensitive=/(access.?token|refresh.?token|id.?token|token|secret|password|passwd|authorization|api.?key|client.?secret|private.?key|credential|cookie|session.?key)/i;
-function redact(value){if(Array.isArray(value))return value.map(redact);if(value&&typeof value==="object"){const result={};for(const [key,item] of Object.entries(value)){result[key]=sensitive.test(key)?"[已遮盖]":redact(item)}return result}return value}
-const input=document.getElementById("input"),status=document.getElementById("status"),results=document.getElementById("results"),output=document.getElementById("output");
-document.getElementById("inspect").addEventListener("click",()=>{results.hidden=true;output.textContent="";status.textContent="";try{const parsed=JSON.parse(input.value);output.textContent=JSON.stringify(redact(parsed),null,2);results.hidden=false;status.style.color="#176b87";status.textContent="解析完成：疑似敏感字段已遮盖。"}catch{status.style.color="#a93333";status.textContent="JSON 格式无效，请检查输入。"}});
-document.getElementById("clear").addEventListener("click",()=>{input.value="";output.textContent="";results.hidden=true;status.textContent="输入和结果已清空。"});
+const input=document.getElementById("input"),status=document.getElementById("status"),result=document.getElementById("result"),value=document.getElementById("value"),copyButton=document.getElementById("copy");
+let sessionToken="";
+function findSessionTokens(item,found=[]){if(Array.isArray(item)){for(const entry of item)findSessionTokens(entry,found)}else if(item&&typeof item==="object"){for(const [key,entry] of Object.entries(item)){if(key==="sessionToken"&&(typeof entry==="string"||typeof entry==="number"))found.push(String(entry));else findSessionTokens(entry,found)}}return found}
+document.getElementById("extract").addEventListener("click",()=>{sessionToken="";copyButton.disabled=true;value.textContent="";result.hidden=true;status.style.color="#a93333";try{const found=findSessionTokens(JSON.parse(input.value));if(found.length===0){status.textContent="没有找到 sessionToken 字段。";return}if(found.length>1){status.textContent="找到多个 sessionToken；为避免选错，请整理为只包含一个该字段的 JSON。";return}sessionToken=found[0];value.textContent=sessionToken;result.hidden=false;copyButton.disabled=sessionToken.length===0;status.style.color="#176b87";status.textContent="已提取唯一的 sessionToken。"}catch{status.textContent="JSON 格式无效，请检查输入。"}});
+copyButton.addEventListener("click",async()=>{if(!sessionToken)return;try{await navigator.clipboard.writeText(sessionToken);status.style.color="#176b87";status.textContent="sessionToken 已复制。"}catch{status.style.color="#a93333";status.textContent="浏览器未允许剪贴板访问，请手动选中该值复制。"}});
+document.getElementById("clear").addEventListener("click",()=>{input.value="";sessionToken="";value.textContent="";result.hidden=true;copyButton.disabled=true;status.textContent="输入和结果已清空。"});
 </script>
-</body></html>
+</body>
+</html>
